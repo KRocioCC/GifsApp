@@ -27,3 +27,5 @@ https://cdnjs.com/libraries/font-awesome/6.7.1
 
 copear el "copy link tag" y agregarlo al index.html base del proyecto
 
+# PARA EL GRID DE IMAGENES
+https://flowbite.com/docs/components/gallery/
