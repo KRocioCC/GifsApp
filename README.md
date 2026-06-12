@@ -33,3 +33,8 @@ https://flowbite.com/docs/components/gallery/
 # PARA LA API DE GIFS
 (seleccionar Create A New API Key y al finalizar la creacion nos dara una direccion url de la APIKEY)
 https://developers.giphy.com/dashboard/?create=true
+
+- https://developers.giphy.com/explorer/   (para el trending)
+
+(probamos en postman)
+https://api.giphy.com/v1/gifs/trending?api_key=vl3aLDVRYjF8moaB9FWc9AxJWPx7f3h9&limit=25&offset=0&rating=g&bundle=messaging_non_clips
