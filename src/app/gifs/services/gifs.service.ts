@@ -13,6 +13,7 @@ export class GifService {
   trendingGifs = signal<Gif[]>([]);
   trendingGifdLoading = signal(true);
 
+
   constructor() {
     this.loadTrendingGifs();
   }
@@ -30,6 +31,21 @@ export class GifService {
       this.trendingGifs.set(gifs);
       this.trendingGifdLoading.set(false);
       console.log({gifs});
+    });
+  }
+
+  //funcion para buscar gifs por query
+  searchGifs(query: string) {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`,{
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+        q: query,
+
+      }
+    } ).subscribe((resp) => {
+      const gifs = GifMapper.mapGiphyItemToGifArray(resp.data);
+      console.log({search: gifs});
     });
   }
 }
