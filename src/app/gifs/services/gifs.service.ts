@@ -1,11 +1,20 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import type { GiphyResponse } from '../interfaces/giphy.interfaces';
 import { environment } from '@environments/environment.development';
 import { Gif } from '../interfaces/gif.interface';
 import { GifMapper } from '../mapper/gif.mapper';
 import { map, Observable, tap } from 'rxjs';
 
+
+//funciona para guardar el historial de busqueda en el localStorage
+const GIF_KEY = "gifs";
+const loadFromLocalStorage = () => {
+  const gifsFromLocalStorage = localStorage.getItem(GIF_KEY) ?? '{}';
+  const gifs = JSON.parse(gifsFromLocalStorage);
+  console.log(gifs);
+  return gifs;
+}
 // {
 //   'goku': []
 // }
@@ -23,12 +32,18 @@ export class GifService {
   trendingGifdLoading = signal(true);
 
   //para HISTORIAL
-  searchHistory = signal<Record<string, Gif[]>>({});
+  searchHistory = signal<Record<string, Gif[]>>(loadFromLocalStorage());
   searchHistoryKeys = computed(() => Object.keys(this.searchHistory()));
 
   constructor() {
     this.loadTrendingGifs();
   }
+
+  //Efecto para guardar el historial de busqueda en el localStorage cada vez que se actualice
+  saveGifsToLocalStorage = effect(() => {
+    const historyString = JSON.stringify(this.searchHistory());
+    localStorage.setItem('gifs', historyString);
+  });
 
   //funcion para hacer la peticion HTTP a la API de Giphy
   loadTrendingGifs() {
