@@ -1,10 +1,18 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import type { GiphyResponse } from '../interfaces/giphy.interfaces';
 import { environment } from '@environments/environment.development';
 import { Gif } from '../interfaces/gif.interface';
 import { GifMapper } from '../mapper/gif.mapper';
 import { map, tap } from 'rxjs';
+
+// {
+//   'goku': []
+// }
+
+// //Tipado para el historial de busqueda, es un objeto con clave string y valor un arreglo de gifs
+// Record<string, Gif[]>
+
 @Injectable({providedIn: 'root'})
 export class GifService {
 
@@ -14,6 +22,9 @@ export class GifService {
   trendingGifs = signal<Gif[]>([]);
   trendingGifdLoading = signal(true);
 
+  //para HISTORIAL
+  searchHistory = signal<Record<string, Gif[]>>({});
+  searchHistoryKeys = computed(() => Object.keys(this.searchHistory()));
 
   constructor() {
     this.loadTrendingGifs();
@@ -49,7 +60,16 @@ export class GifService {
       map( ({data}) => data),
       map( (items) => GifMapper.mapGiphyItemToGifArray(items)),
 
+      //Historial
+      //Se hace una copia de esos gifs y se guardan en el historial
       //TODO: Historial
+      tap( (items) => {
+        this.searchHistory.update((history) => ({
+            ...history,
+            [query.toLowerCase()]: items,
+
+        }));
+      })
     );
 
 
