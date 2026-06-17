@@ -29,7 +29,10 @@ export class GifService {
 
   //Para almacenar el estado de los gifs
   trendingGifs = signal<Gif[]>([]);
-  trendingGifdLoading = signal(true);
+  trendingGifdLoading = signal(false);
+
+  //Variable para almacenar la pagina actual del scroll infinito
+  private trendingPage = signal(0);
 
   //para HISTORIAL
   searchHistory = signal<Record<string, Gif[]>>(loadFromLocalStorage());
@@ -57,17 +60,25 @@ export class GifService {
 
   //funcion para hacer la peticion HTTP a la API de Giphy
   loadTrendingGifs() {
+
+    if( this.trendingGifdLoading() ) return;
+    this.trendingGifdLoading.set(true);
+
     //se puede hacer peticiones, get, post, put, delete, patch
     this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`,{
       params: {
         api_key: environment.giphyApiKey,
         limit: 20,
+        //Variable para la paginacion del scroll infinito, se multiplica por 20 porque es el limite de gifs por pagina
+        offset: this.trendingPage() * 20,
       }
     } ).subscribe((resp) => {
       const gifs = GifMapper.mapGiphyItemToGifArray(resp.data);
-      this.trendingGifs.set(gifs);
+      //Se actualiza la pagina del scroll infinito
+      this.trendingGifs.update( currentGifs => [...currentGifs, ...gifs] );
+      this.trendingPage.update( currentPage => currentPage + 1 );
       this.trendingGifdLoading.set(false);
-      console.log({gifs});
+      // console.log({gifs});
     });
   }
 

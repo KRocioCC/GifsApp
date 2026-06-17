@@ -1,7 +1,6 @@
 import { Component, ElementRef, inject, viewChild } from '@angular/core';
-import { GifList } from "../../components/gif-list/gif-list";
+// import { GifList } from "../../components/gif-list/gif-list";
 import { GifService } from '../../services/gifs.service';
-import { NgClass } from "../../../../../node_modules/@angular/common/types/_common_module-chunk";
 
 // const imageUrls: string[] = [
 //     "https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg",
@@ -29,10 +28,28 @@ export default class TrendingPage {
   //importamos el servicio
   gifService = inject(GifService);
 
-  scrollDivRef = viewChild<ElementRef>('groupDiv');
+  scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('groupDiv');
 
   onScroll(event: Event) {
+    //variable para obtener el elemento del scroll
     const scrollDiv = this.scrollDivRef()?.nativeElement;
-    console.log(scrollDiv);
+    if(!scrollDiv) return;
+
+    //Variable para obtener la posicion del scroll
+    const scrollTop = scrollDiv.scrollTop;
+
+    //Variable para obtener el alto del scroll
+    const clientHeight = scrollDiv.clientHeight;
+
+    //Variable para obtener el alto total del scroll
+    const scrollHeight = scrollDiv.scrollHeight;
+
+    // console.log(scrollTop, clientHeight, scrollHeight);
+
+    //Variable para saber si el scroll esta al final
+    const isAtBottom = scrollTop + clientHeight + 300 >= scrollHeight;
+    if(!isAtBottom){
+      this.gifService.loadTrendingGifs();
+    }
   }
 }
