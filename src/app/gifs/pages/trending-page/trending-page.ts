@@ -1,6 +1,7 @@
-import { Component, ElementRef, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 // import { GifList } from "../../components/gif-list/gif-list";
 import { GifService } from '../../services/gifs.service';
+import { ScrollStateService } from 'src/app/shared/services/scroll-state.service';
 
 // const imageUrls: string[] = [
 //     "https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg",
@@ -22,13 +23,23 @@ import { GifService } from '../../services/gifs.service';
   imports: [],
   templateUrl: './trending-page.html',
 })
-export default class TrendingPage {
+export default class TrendingPage implements AfterViewInit {
   // gifs = imageUrls;
 
   //importamos el servicio
   gifService = inject(GifService);
 
+  //injectamos el servicio para el scroll infinito
+  scrollStateService = inject(ScrollStateService);
+
   scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('groupDiv');
+
+  //Metodo del ciclo de vida de Angular, se ejecuta despues de que la vista se ha inicializado
+  ngAfterViewInit(): void {
+    const scrollDiv = this.scrollDivRef()?.nativeElement;
+    if(!scrollDiv) return;
+    scrollDiv.scrollTop = this.scrollStateService.trendingScrollState();
+  }
 
   onScroll(event: Event) {
     //variable para obtener el elemento del scroll
@@ -48,6 +59,10 @@ export default class TrendingPage {
 
     //Variable para saber si el scroll esta al final
     const isAtBottom = scrollTop + clientHeight + 300 >= scrollHeight;
+
+    //Actualizamos la posicion del scroll en el servicio
+    this.scrollStateService.trendingScrollState.set(scrollTop);
+
     if(!isAtBottom){
       this.gifService.loadTrendingGifs();
     }
