@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   companyName: 'Gifs',
   companyName2: 'App',
-  companySlogan: 'Find the best gifs in the world',
+  companySlogan: 'Encuentra los mejores gifs del mundo',
 
   //Api keys
   giphyApiKey: 'vl3aLDVRYjF8moaB9FWc9AxJWPx7f3h9',
