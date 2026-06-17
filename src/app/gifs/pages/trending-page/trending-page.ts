@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { GifList } from "../../components/gif-list/gif-list";
 import { GifService } from '../../services/gifs.service';
+import { NgClass } from "../../../../../node_modules/@angular/common/types/_common_module-chunk";
 
 // const imageUrls: string[] = [
 //     "https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg",
@@ -19,7 +20,7 @@ import { GifService } from '../../services/gifs.service';
 
 @Component({
   selector: 'app-trending-page',
-  imports: [GifList],
+  imports: [GifList, NgClass],
   templateUrl: './trending-page.html',
 })
 export default class TrendingPage {
